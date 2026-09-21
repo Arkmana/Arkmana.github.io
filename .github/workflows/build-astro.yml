@@ -3,6 +3,9 @@ name: Build Astro blog from private source and deploy to Pages
 on:
   push:
     branches: [main]
+  # 供 blog-source 推送后自动触发（需在 blog-source 配 PAGES_DISPATCH_TOKEN）
+  repository_dispatch:
+    types: [blog-updated]
   workflow_dispatch:
 
 permissions:
