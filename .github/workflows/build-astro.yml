@@ -18,7 +18,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout private source (blog-source)
+      - name: Checkout private source (blog-source, branch=preview)
         uses: actions/checkout@v4
         with:
           repository: Arkmana/blog-source
@@ -26,17 +26,20 @@ jobs:
           path: src-repo
           token: ${{ secrets.SOURCE_REPO_TOKEN }}
 
+      - name: Show what was checked out
+        run: ls -la src-repo
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
       - name: Install dependencies
-        working-directory: src-repo/astro-site
+        working-directory: src-repo
         run: npm install --no-audit --no-fund
 
       - name: Build site
-        working-directory: src-repo/astro-site
+        working-directory: src-repo
         run: npm run build
 
       - name: Configure Pages
@@ -45,7 +48,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: src-repo/astro-site/dist
+          path: src-repo/dist
 
   deploy:
     needs: build
