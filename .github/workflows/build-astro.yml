@@ -18,29 +18,38 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout private source (blog-source, branch=preview)
+      - name: Checkout private source (blog-source, branch=firefly)
         uses: actions/checkout@v4
         with:
           repository: Arkmana/blog-source
-          ref: preview
+          ref: firefly
           path: src-repo
           token: ${{ secrets.SOURCE_REPO_TOKEN }}
 
-      - name: Show what was checked out
-        run: ls -la src-repo
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.22.0
+          run_install: false
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 22.23.0
+          cache: pnpm
+          cache-dependency-path: src-repo/pnpm-lock.yaml
 
       - name: Install dependencies
         working-directory: src-repo
-        run: npm install --no-audit --no-fund
+        run: pnpm install --frozen-lockfile
 
       - name: Build site
         working-directory: src-repo
-        run: npm run build
+        run: pnpm run build
+
+      - name: Add .nojekyll
+        working-directory: src-repo
+        run: touch dist/.nojekyll
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
