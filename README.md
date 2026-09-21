@@ -1,40 +1,31 @@
 # Arkmana.github.io
 
-这是一个**构建产物仓库**，不是源码仓库。请不要在这里直接编辑内容。
+构建产物仓库（旧方案，**已迁移到 Cloudflare Pages**）。
 
-## 它是怎么工作的
+## 当前部署架构
 
 ```
-Arkmana/blog-source  (私有，真正的源码)
-   └─ firefly 分支   ← Firefly / Astro 7 源码
-          │
-          ↓  .github/workflows/build-astro.yml
-   checkout → pnpm install → pnpm run build → deploy-pages
-          │
-          ↓
-   https://arkmana.github.io/
+Obsidian 库（D:\obsidain\数学）
+   │  图片 → CloudFlare ImgBed（https://cloudflare-imgbed-9wx.pages.dev）
+   │  笔记 → scripts/publish-vault.mjs 同步
+   ↓
+Arkmana/blog-source  (私有)
+   ├─ main   ← Cloudflare Pages 监听这个分支
+   └─ firefly ← 同一份内容（保留兼容）
+   ↓
+Cloudflare Pages「arkmana」→ https://arkmana.pages.dev/
 ```
 
-线上文件**不提交到这个仓库**，由 GitHub Actions 通过
-`actions/upload-pages-artifact` + `actions/deploy-pages` 直接发布到 Pages。
-
-## 分支说明
+## 本仓库的现状
 
 | 分支 | 用途 |
 | --- | --- |
-| `main` | 只放工作流与说明（本文件） |
-| `gh-pages` | 早期 Astro+Vue 站点的产物，已停用，保留备查 |
+| `main` | 只放 GitHub Actions 工作流（备用） |
+| `gh-pages` | 更早期的 Astro+Vue 站点产物，已停用 |
 
-## 构建触发方式
+## 为什么保留这个仓库
 
-| 方式 | 延迟 | 说明 |
-| --- | --- | --- |
-| push 到本仓 `main` | 立即 | 改了工作流或本文件时 |
-| `repository_dispatch` (`blog-updated`) | 立即 | 供 blog-source 远端触发 |
-| `workflow_dispatch` | 立即 | 手动 Run workflow |
-| `schedule`（每 6 小时） | ≤6 小时 | 无凭据兜底 |
+- `build-astro.yml` 工作流作为**备用部署通道**（Cloudflare 出问题时可切回 GitHub Pages）
+- 部署地址：`https://arkmana.github.io/`（内容可能是旧的）
 
-## 源码与归档
-
-- 源码：`Arkmana/blog-source`（私有）的 `firefly` 分支
-- 旧站源码：同仓库 `preview` 分支（Astro + Vue 3，5 篇文章，已停用但保留）
+主站已切换至 **https://arkmana.pages.dev/**。
